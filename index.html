@@ -3,488 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vollfunktionsfähiges Kniffel mit KI</title>
+    <title>Kniffel mit KI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --success-color: #2ecc71;
-            --ai-color: #9b59b6;
-            --light-color: #ecf0f1;
-            --dark-color: #34495e;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a2980, #26d0ce);
-            color: var(--light-color);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: var(--border-radius);
-        }
-        
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        h2 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: var(--light-color);
-        }
-        
-        .setup-screen {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--box-shadow);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .game-screen {
-            display: none;
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--box-shadow);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        input[type="number"],
-        input[type="text"] {
-            width: 100%;
-            padding: 12px 15px;
-            border: none;
-            border-radius: var(--border-radius);
-            background-color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            margin-bottom: 10px;
-            color: var(--dark-color);
-        }
-        
-        .player-names {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .player-input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            background-color: rgba(0, 0, 0, 0.15);
-            padding: 12px;
-            border-radius: var(--border-radius);
-        }
-        
-        .player-input-group input[type="text"] {
-            margin-bottom: 0;
-            flex: 1;
-        }
-        
-        .ai-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-            cursor: pointer;
-            user-select: none;
-            background-color: rgba(155, 89, 182, 0.3);
-            padding: 8px 12px;
-            border-radius: var(--border-radius);
-            transition: background-color 0.2s;
-        }
-        
-        .ai-toggle:hover {
-            background-color: rgba(155, 89, 182, 0.5);
-        }
-        
-        .ai-toggle.active {
-            background-color: rgba(155, 89, 182, 0.8);
-        }
-        
-        .ai-toggle input {
-            cursor: pointer;
-            width: 18px;
-            height: 18px;
-        }
-        
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .btn-success {
-            background-color: var(--success-color);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-            transform: translateY(-2px);
-        }
-        
-        .btn-danger {
-            background-color: var(--accent-color);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
-        }
-        
-        .btn-ai {
-            background-color: var(--ai-color);
-            color: white;
-        }
-        
-        .btn-ai:hover {
-            background-color: #8e44ad;
-            transform: translateY(-2px);
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
-        .dice-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-        
-        .dice {
-            width: 80px;
-            height: 80px;
-            background-color: white;
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3rem;
-            color: var(--dark-color);
-            cursor: pointer;
-            box-shadow: var(--box-shadow);
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-        
-        .dice:hover {
-            transform: scale(1.05);
-        }
-        
-        .dice.held {
-            border: 4px solid var(--secondary-color);
-            box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
-        }
-        
-        .dice.ai-suggestion {
-            border: 4px solid var(--ai-color);
-            box-shadow: 0 0 15px rgba(155, 89, 182, 0.7);
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 15px rgba(155, 89, 182, 0.7); }
-            50% { box-shadow: 0 0 25px rgba(155, 89, 182, 1); }
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-            flex-wrap: wrap;
-        }
-        
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .current-player {
-            font-size: 1.5rem;
-            font-weight: 600;
-            background-color: rgba(52, 152, 219, 0.3);
-            padding: 12px 25px;
-            border-radius: var(--border-radius);
-        }
-        
-        .current-player.ai-player {
-            background-color: rgba(155, 89, 182, 0.3);
-        }
-        
-        .rolls-left {
-            font-size: 1.3rem;
-            background-color: rgba(231, 76, 60, 0.3);
-            padding: 12px 25px;
-            border-radius: var(--border-radius);
-        }
-        
-        .ai-info {
-            display: none;
-            background-color: rgba(155, 89, 182, 0.3);
-            padding: 12px 25px;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            max-width: 400px;
-        }
-        
-        .ai-info.visible {
-            display: block;
-        }
-        
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-        }
-        
-        .scorecard {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            overflow-x: auto;
-        }
-        
-        .scorecard.ai-scorecard {
-            background-color: rgba(155, 89, 182, 0.2);
-            border: 1px solid rgba(155, 89, 182, 0.5);
-        }
-        
-        .scorecard.ai-scorecard h3::after {
-            content: " 🤖";
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 15px 10px;
-            text-align: left;
-            font-size: 1.1rem;
-        }
-        
-        td {
-            padding: 12px 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        
-        .score-cell {
-            cursor: pointer;
-            transition: background-color 0.2s;
-            text-align: center;
-            font-weight: 600;
-        }
-        
-        .score-cell:hover:not(.scored) {
-            background-color: rgba(52, 152, 219, 0.3);
-        }
-        
-        .scored {
-            background-color: rgba(46, 204, 113, 0.2);
-        }
-        
-        .recommended {
-            background-color: rgba(241, 196, 15, 0.4) !important;
-            border: 2px solid #f1c40f;
-            animation: glow 1.5s infinite;
-        }
-        
-        @keyframes glow {
-            0%, 100% { background-color: rgba(241, 196, 15, 0.4); }
-            50% { background-color: rgba(241, 196, 15, 0.6); }
-        }
-        
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .total-score {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--success-color);
-        }
-        
-        .game-over {
-            display: none;
-            text-align: center;
-            padding: 40px;
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: var(--border-radius);
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 100;
-            width: 90%;
-            max-width: 600px;
-            border: 2px solid var(--ai-color);
-        }
-        
-        .winner {
-            font-size: 2.5rem;
-            color: gold;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-        
-        .instructions {
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-top: 30px;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 15px;
-            color: var(--light-color);
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-            line-height: 1.6;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        
-        .ai-badge {
-            display: inline-block;
-            background-color: var(--ai-color);
-            color: white;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            margin-left: 8px;
-            font-weight: 600;
-        }
-        
-        @media (max-width: 768px) {
-            .dice {
-                width: 70px;
-                height: 70px;
-                font-size: 2.5rem;
-            }
-            
-            .game-board {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .dice {
-                width: 60px;
-                height: 60px;
-                font-size: 2rem;
-            }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: linear-gradient(135deg, #1a2980, #26d0ce); color: #ecf0f1; min-height: 100vh; padding: 15px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+        h1 { font-size: 2.2rem; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.5rem; margin-bottom: 15px; }
+        .setup-screen, .game-screen { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2); }
+        .game-screen { display: none; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; }
+        input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; border: none; border-radius: 6px; font-size: 1rem; color: #2c3e50; }
+        .player-names { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 12px; }
+        .player-input-group { display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.15); padding: 10px; border-radius: 6px; }
+        .player-input-group input[type="text"] { flex: 1; }
+        .ai-toggle { display: flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; user-select: none; background: rgba(155,89,182,0.3); padding: 8px 10px; border-radius: 6px; transition: background 0.2s; font-size: 0.9rem; }
+        .ai-toggle:hover { background: rgba(155,89,182,0.5); }
+        .ai-toggle.active { background: rgba(155,89,182,0.8); }
+        .ai-toggle input { cursor: pointer; width: 16px; height: 16px; }
+        .btn { padding: 12px 22px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: white; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-primary { background: #3498db; }
+        .btn-success { background: #2ecc71; }
+        .btn-danger { background: #e74c3c; }
+        .btn-ai { background: #9b59b6; }
+        .dice-container { display: flex; justify-content: center; gap: 15px; margin: 25px 0; flex-wrap: wrap; }
+        .dice { width: 75px; height: 75px; background: white; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2.8rem; color: #34495e; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.2s; user-select: none; font-weight: bold; }
+        .dice:hover { transform: scale(1.05); }
+        .dice.held { border: 4px solid #3498db; box-shadow: 0 0 15px rgba(52,152,219,0.6); }
+        .dice.ai-suggestion { border: 4px solid #9b59b6; box-shadow: 0 0 15px rgba(155,89,182,0.8); animation: pulse 1.2s infinite; }
+        .dice.disabled { cursor: not-allowed; opacity: 0.7; }
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 15px rgba(155,89,182,0.8); } 50% { box-shadow: 0 0 25px rgba(155,89,182,1); } }
+        .controls { display: flex; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+        .game-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        .current-player { font-size: 1.3rem; font-weight: 600; background: rgba(52,152,219,0.3); padding: 10px 20px; border-radius: 6px; }
+        .current-player.ai-player { background: rgba(155,89,182,0.4); }
+        .rolls-left { font-size: 1.1rem; background: rgba(231,76,60,0.3); padding: 10px 20px; border-radius: 6px; }
+        .ai-info { display: none; background: rgba(155,89,182,0.3); padding: 10px 20px; border-radius: 6px; font-size: 0.95rem; }
+        .ai-info.visible { display: block; }
+        .game-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+        .scorecard { background: rgba(255,255,255,0.15); border-radius: 6px; padding: 15px; overflow-x: auto; }
+        .scorecard.ai-scorecard { background: rgba(155,89,182,0.25); border: 1px solid rgba(155,89,182,0.6); }
+        .scorecard.active { border: 2px solid #f1c40f; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        th { background: rgba(0,0,0,0.2); padding: 10px 8px; text-align: left; }
+        td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .score-cell { cursor: pointer; text-align: center; font-weight: 600; transition: background 0.2s; }
+        .score-cell:hover:not(.scored) { background: rgba(52,152,219,0.3); }
+        .score-cell.scored { background: rgba(46,204,113,0.2); }
+        .score-cell.recommended { background: rgba(241,196,15,0.5) !important; border: 2px solid #f1c40f; }
+        .player-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(255,255,255,0.2); }
+        .total-score { font-size: 1.3rem; font-weight: bold; color: #2ecc71; }
+        .game-over { display: none; text-align: center; padding: 30px; background: rgba(0,0,0,0.9); border-radius: 8px; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 100; width: 90%; max-width: 500px; border: 2px solid #9b59b6; }
+        .winner { font-size: 2rem; color: gold; margin-bottom: 15px; }
+        .instructions { background: rgba(0,0,0,0.2); border-radius: 6px; padding: 15px; margin-top: 20px; font-size: 0.9rem; }
+        .instructions h3 { margin-bottom: 10px; }
+        .instructions ul { padding-left: 20px; line-height: 1.5; }
+        .instructions li { margin-bottom: 5px; }
+        @media (max-width: 600px) {
+            .dice { width: 55px; height: 55px; font-size: 2rem; }
+            h1 { font-size: 1.6rem; }
+            .controls { flex-direction: column; }
+            .btn { width: 100%; }
+            .game-info { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-dice"></i> Vollfunktionsfähiges Kniffel</h1>
-            <p>Mit KI-Gegner und optimaler Strategie</p>
+            <h1><i class="fas fa-dice"></i> Kniffel mit KI</h1>
         </header>
         
         <div class="setup-screen" id="setupScreen">
@@ -493,18 +85,10 @@
                 <label for="playerCount">Anzahl der Spieler (1-6):</label>
                 <input type="number" id="playerCount" min="1" max="6" value="2">
             </div>
-            
-            <div class="player-names" id="playerNamesContainer">
-                <!-- Player name inputs will be generated here -->
-            </div>
-            
-            <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
-                <button class="btn btn-ai" id="addAiBtn">
-                    <i class="fas fa-robot"></i> KI-Spieler generieren
-                </button>
-                <button class="btn btn-primary" id="startGameBtn">
-                    <i class="fas fa-play"></i> Spiel starten
-                </button>
+            <div class="player-names" id="playerNamesContainer"></div>
+            <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-ai" id="addAiBtn"><i class="fas fa-robot"></i> KI-Spieler generieren</button>
+                <button class="btn btn-primary" id="startGameBtn"><i class="fas fa-play"></i> Spiel starten</button>
             </div>
         </div>
         
@@ -514,1055 +98,997 @@
                 <div class="rolls-left" id="rollsLeftDisplay">Würfe übrig: 3</div>
                 <div class="ai-info" id="aiInfo"></div>
             </div>
-            
-            <div class="dice-container" id="diceContainer">
-                <!-- Dice will be generated here -->
-            </div>
-            
+            <div class="dice-container" id="diceContainer"></div>
             <div class="controls">
-                <button class="btn btn-primary" id="rollBtn">
-                    <i class="fas fa-redo"></i> Würfeln
-                </button>
-                <button class="btn btn-ai" id="aiHintBtn">
-                    <i class="fas fa-robot"></i> KI-Tipp
-                </button>
-                <button class="btn btn-success" id="scoreBtn" disabled>
-                    <i class="fas fa-star"></i> Optimalen Wert eintragen
-                </button>
-                <button class="btn btn-danger" id="newGameBtn">
-                    <i class="fas fa-plus-circle"></i> Neues Spiel
-                </button>
+                <button class="btn btn-primary" id="rollBtn"><i class="fas fa-redo"></i> Würfeln</button>
+                <button class="btn btn-ai" id="aiHintBtn"><i class="fas fa-robot"></i> KI-Tipp</button>
+                <button class="btn btn-success" id="scoreBtn" disabled><i class="fas fa-star"></i> Optimalen Wert eintragen</button>
+                <button class="btn btn-danger" id="newGameBtn"><i class="fas fa-home"></i> Neues Spiel</button>
             </div>
-            
-            <div class="game-board" id="gameBoard">
-                <!-- Player scorecards will be generated here -->
-            </div>
+            <div class="game-board" id="gameBoard"></div>
         </div>
         
         <div class="game-over" id="gameOverScreen">
-            <h2 class="winner" id="winnerName">Spieler 1 gewinnt!</h2>
-            <p id="finalScores">Finale Punktstände werden hier angezeigt</p>
-            <button class="btn btn-primary" id="playAgainBtn">
-                <i class="fas fa-redo"></i> Nochmal spielen
-            </button>
+            <h2 class="winner" id="winnerName"></h2>
+            <p id="finalScores"></p>
+            <button class="btn btn-primary" id="playAgainBtn" style="margin-top: 15px;"><i class="fas fa-redo"></i> Nochmal spielen</button>
         </div>
         
         <div class="instructions">
             <h3>Spielanleitung</h3>
             <ul>
-                <li>Jeder Spieler hat pro Runde bis zu 3 Würfe mit den 5 Würfeln</li>
-                <li>Nach jedem Wurf können Würfel durch Klicken fixiert werden</li>
-                <li>Nach den Würfen muss eine Kategorie für die Punktzahl ausgewählt werden</li>
-                <li>Es gibt 13 Kategorien, jede kann nur einmal pro Spiel verwendet werden</li>
-                <li>Kniffel (5 gleiche) gibt 50 Punkte + die Summe der Würfel</li>
-                <li>Der Spieler mit der höchsten Gesamtpunktzahl gewinnt</li>
-                <li><strong>KI-Spieler:</strong> Verwenden eine optimale Strategie basierend auf Wahrscheinlichkeiten</li>
-                <li><strong>KI-Tipp:</strong> Zeigt die optimale Kategorie und Würfel-Fixierung an</li>
-                <li><strong>Optimalen Wert eintragen:</strong> Trägt automatisch den optimalen Wert ein</li>
+                <li>3 Würfe pro Runde - klicke Würfel zum Fixieren</li>
+                <li>13 Kategorien, jede nur einmal verwendbar</li>
+                <li>KI-Spieler spielen automatisch mit optimaler Strategie</li>
+                <li>KI-Tipp zeigt die beste Fixierung/Kategorie</li>
+                <li>"Optimalen Wert eintragen" wählt automatisch die beste Kategorie</li>
             </ul>
         </div>
     </div>
 
     <script>
-        // ============================================================
-        // KNIFfel GAME STATE
-        // ============================================================
-        const gameState = {
+    (function() {
+        'use strict';
+        
+        // ==================== CONSTANTS ====================
+        const CATEGORIES = [
+            { id: 'ones', name: 'Einsen', calc: d => count(d, 1) * 1 },
+            { id: 'twos', name: 'Zweien', calc: d => count(d, 2) * 2 },
+            { id: 'threes', name: 'Dreien', calc: d => count(d, 3) * 3 },
+            { id: 'fours', name: 'Vieren', calc: d => count(d, 4) * 4 },
+            { id: 'fives', name: 'Fünfen', calc: d => count(d, 5) * 5 },
+            { id: 'sixes', name: 'Sechsen', calc: d => count(d, 6) * 6 },
+            { id: 'threeOfAKind', name: 'Dreierpasch', calc: d => hasNOfAKind(d, 3) ? sum(d) : 0 },
+            { id: 'fourOfAKind', name: 'Viererpasch', calc: d => hasNOfAKind(d, 4) ? sum(d) : 0 },
+            { id: 'fullHouse', name: 'Full House', calc: d => isFullHouse(d) ? 25 : 0 },
+            { id: 'smallStraight', name: 'Kleine Straße', calc: d => hasSmallStraight(d) ? 30 : 0 },
+            { id: 'largeStraight', name: 'Große Straße', calc: d => hasLargeStraight(d) ? 40 : 0 },
+            { id: 'kniffel', name: 'Kniffel', calc: d => isKniffel(d) ? 50 : 0 },
+            { id: 'chance', name: 'Chance', calc: d => sum(d) }
+        ];
+        
+        // ==================== HELPERS ====================
+        function sum(d) { return d.reduce((a, b) => a + b, 0); }
+        function count(d, n) { return d.filter(x => x === n).length; }
+        function hasNOfAKind(d, n) {
+            const c = {};
+            d.forEach(x => c[x] = (c[x] || 0) + 1);
+            return Object.values(c).some(x => x >= n);
+        }
+        function isFullHouse(d) {
+            const c = {};
+            d.forEach(x => c[x] = (c[x] || 0) + 1);
+            const v = Object.values(c).sort();
+            return v.length === 2 && v[0] === 2 && v[1] === 3;
+        }
+        function hasSmallStraight(d) {
+            const s = new Set(d);
+            return (s.has(1)&&s.has(2)&&s.has(3)&&s.has(4)) ||
+                   (s.has(2)&&s.has(3)&&s.has(4)&&s.has(5)) ||
+                   (s.has(3)&&s.has(4)&&s.has(5)&&s.has(6));
+        }
+        function hasLargeStraight(d) {
+            const s = new Set(d);
+            return (s.has(1)&&s.has(2)&&s.has(3)&&s.has(4)&&s.has(5)) ||
+                   (s.has(2)&&s.has(3)&&s.has(4)&&s.has(5)&&s.has(6));
+        }
+        function isKniffel(d) { return new Set(d).size === 1; }
+        
+        // ==================== KI ENGINE (schnell & deterministisch) ====================
+        // Wir berechnen den Erwartungswert für eine Kategorie mittels exakter
+        // Wahrscheinlichkeitsverteilung über die nächsten Würfe.
+        
+        // Erzeugt alle 6^n Kombinationen von n Würfen
+        function allRolls(n) {
+            const result = [];
+            function rec(current) {
+                if (current.length === n) { result.push([...current]); return; }
+                for (let i = 1; i <= 6; i++) { current.push(i); rec(current); current.pop(); }
+            }
+            rec([]);
+            return result;
+        }
+        
+        // Cache für alleRolls
+        const rollsCache = {};
+        function getRolls(n) {
+            if (!rollsCache[n]) rollsCache[n] = allRolls(n);
+            return rollsCache[n];
+        }
+        
+        // Erwartungswert einer Kategorie, wenn wir mit aktuellen Würfeln
+        // noch 'rollsLeft' Würfe haben und optimal spielen
+        // Wir nehmen an: Ziel ist es, den Wert dieser einen Kategorie zu maximieren
+        function expectedValueForCategory(categoryId, dice, rollsLeft) {
+            const cat = CATEGORIES.find(c => c.id === categoryId);
+            if (!cat) return 0;
+            
+            if (rollsLeft === 0) return cat.calc(dice);
+            
+            // Beste Fixierung finden
+            let best = 0;
+            // Iteriere über alle 32 Fixierungs-Masken
+            for (let mask = 0; mask < 32; mask++) {
+                // Wenn alle fixiert sind, macht das keinen Sinn
+                if (mask === 31) continue;
+                
+                const fixed = [];
+                const numToRoll = 5 - popcount(mask);
+                for (let i = 0; i < 5; i++) {
+                    if (mask & (1 << i)) fixed.push(dice[i]);
+                }
+                
+                // Erwartungswert für diese Fixierung berechnen
+                let total = 0;
+                const rolls = getRolls(numToRoll);
+                for (const roll of rolls) {
+                    const newDice = [...fixed, ...roll];
+                    const ev = expectedValueForCategory(categoryId, newDice, rollsLeft - 1);
+                    total += ev;
+                }
+                const avg = total / rolls.length;
+                if (avg > best) best = avg;
+            }
+            return best;
+        }
+        
+        function popcount(n) {
+            let c = 0;
+            while (n) { c += n & 1; n >>= 1; }
+            return c;
+        }
+        
+        // Erwartungswert, wenn wir diese Kategorie JETZT eintragen würden
+        // vs. wenn wir noch weiterspielen
+        function scoreIfPlayedNow(categoryId, dice) {
+            const cat = CATEGORIES.find(c => c.id === categoryId);
+            return cat ? cat.calc(dice) : 0;
+        }
+        
+        // Findet die optimale Kategorie und Fixierung für den aktuellen Zug
+        // Berücksichtigt: aktuelle Punkte, Bonus-Situation, verfügbare Kategorien
+        function findOptimalMove(player, dice, rollsLeft) {
+            const available = player.scorecard.filter(c => c.score === null);
+            if (available.length === 0) return null;
+            
+            if (rollsLeft === 0) {
+                // Keine Würfe mehr: wähle Kategorie mit max. Punktwert
+                // Aber berücksichtige Bonus!
+                const results = available.map(cat => {
+                    const value = cat.calc(dice);
+                    return { category: cat, immediateScore: value, expectedValue: value };
+                });
+                
+                // Bonus-Berechnung: Wenn oberer Teil < 63, priorisiere obere Kategorien
+                const upperCategories = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+                const currentUpper = player.scorecard
+                    .filter(c => upperCategories.includes(c.id) && c.score !== null)
+                    .reduce((s, c) => s + c.score, 0);
+                const needForBonus = 63 - currentUpper;
+                
+                results.forEach(r => {
+                    if (upperCategories.includes(r.category.id) && needForBonus > 0 && currentUpper < 63) {
+                        // Bonus ist erreichbar - werte obere Kategorien höher
+                        r.expectedValue += 3; // kleiner Bonus für obere Kategorien
+                    }
+                });
+                
+                results.sort((a, b) => b.expectedValue - a.expectedValue || b.immediateScore - a.immediateScore);
+                return { category: results[0].category, score: results[0].immediateScore, allResults: results };
+            }
+            
+            // Würfe übrig: berechne Erwartungswert für jede Kategorie
+            // Da die vollständige Berechnung zu langsam ist, verwenden wir Heuristiken
+            const results = available.map(cat => {
+                const immediateScore = cat.calc(dice);
+                // Heuristik: erwarteter Wert basierend auf aktuellen Würfeln + Verbesserungspotenzial
+                const heuristic = calculateHeuristicValue(cat.id, dice, rollsLeft);
+                return { category: cat, immediateScore, expectedValue: heuristic };
+            });
+            
+            results.sort((a, b) => b.expectedValue - a.expectedValue);
+            return { category: results[0].category, score: results[0].immediateScore, allResults: results };
+        }
+        
+        // Heuristische Bewertung einer Kategorie mit aktuellen Würfeln und verbleibenden Würfen
+        function calculateHeuristicValue(categoryId, dice, rollsLeft) {
+            const current = scoreIfPlayedNow(categoryId, dice);
+            
+            // Wie viele Würfel sind "nützlich" für diese Kategorie?
+            let usefulCount = 0;
+            
+            switch(categoryId) {
+                case 'ones': usefulCount = count(dice, 1); break;
+                case 'twos': usefulCount = count(dice, 2); break;
+                case 'threes': usefulCount = count(dice, 3); break;
+                case 'fours': usefulCount = count(dice, 4); break;
+                case 'fives': usefulCount = count(dice, 5); break;
+                case 'sixes': usefulCount = count(dice, 6); break;
+                case 'threeOfAKind':
+                case 'fourOfAKind': {
+                    const c = {};
+                    dice.forEach(x => c[x] = (c[x] || 0) + 1);
+                    usefulCount = Math.max(...Object.values(c));
+                    break;
+                }
+                case 'fullHouse': {
+                    const c = {};
+                    dice.forEach(x => c[x] = (c[x] || 0) + 1);
+                    const vals = Object.values(c);
+                    if (vals.includes(3) && vals.includes(2)) usefulCount = 5;
+                    else if (vals.includes(3)) usefulCount = 3;
+                    else if (vals.includes(2) && vals.filter(v => v === 2).length >= 2) usefulCount = 4;
+                    else usefulCount = Math.max(...vals);
+                    break;
+                }
+                case 'smallStraight': {
+                    const s = new Set(dice);
+                    const straights = [[1,2,3,4],[2,3,4,5],[3,4,5,6]];
+                    for (const st of straights) {
+                        const have = st.filter(x => s.has(x)).length;
+                        if (have > usefulCount) usefulCount = have;
+                    }
+                    break;
+                }
+                case 'largeStraight': {
+                    const s = new Set(dice);
+                    const straights = [[1,2,3,4,5],[2,3,4,5,6]];
+                    for (const st of straights) {
+                        const have = st.filter(x => s.has(x)).length;
+                        if (have > usefulCount) usefulCount = have;
+                    }
+                    break;
+                }
+                case 'kniffel': {
+                    const c = {};
+                    dice.forEach(x => c[x] = (c[x] || 0) + 1);
+                    usefulCount = Math.max(...Object.values(c));
+                    break;
+                }
+                case 'chance': usefulCount = 5; break;
+            }
+            
+            // Potenzial: wie viel könnte sich noch verbessern?
+            const remainingRolls = rollsLeft;
+            const numToRoll = 5 - usefulCount;
+            
+            // Chance, dass wir in den verbleibenden Würfen verbessern
+            // Einfache Approximation
+            let improvement = 0;
+            switch(categoryId) {
+                case 'ones': case 'twos': case 'threes': case 'fours': case 'fives': case 'sixes': {
+                    // Erwartungswert: (5 - usefulCount) * (1/6) * value
+                    const value = parseInt(categoryId === 'ones' ? 1 : categoryId === 'twos' ? 2 : categoryId === 'threes' ? 3 : categoryId === 'fours' ? 4 : categoryId === 'fives' ? 5 : 6);
+                    improvement = (5 - usefulCount) * (1/6) * value;
+                    break;
+                }
+                case 'threeOfAKind': case 'fourOfAKind': {
+                    const target = categoryId === 'threeOfAKind' ? 3 : 4;
+                    if (usefulCount < target) {
+                        const needed = target - usefulCount;
+                        const p = 1 - Math.pow(5/6, numToRoll);
+                        improvement = p * 20;
+                    }
+                    break;
+                }
+                case 'fullHouse': {
+                    const c = {};
+                    dice.forEach(x => c[x] = (c[x] || 0) + 1);
+                    const vals = Object.values(c);
+                    if (vals.includes(3) && vals.includes(2)) improvement = 0;
+                    else if (vals.includes(3)) improvement = 0.4 * 25;
+                    else if (vals.filter(v => v >= 2).length >= 2) improvement = 0.5 * 25;
+                    else if (vals.includes(2)) improvement = 0.2 * 25;
+                    else improvement = 0.05 * 25;
+                    break;
+                }
+                case 'smallStraight': {
+                    const s = new Set(dice);
+                    const straights = [[1,2,3,4],[2,3,4,5],[3,4,5,6]];
+                    let bestHave = 0;
+                    for (const st of straights) {
+                        const have = st.filter(x => s.has(x)).length;
+                        if (have > bestHave) bestHave = have;
+                    }
+                    improvement = bestHave >= 3 ? 0.5 * 30 : 0.1 * 30;
+                    break;
+                }
+                case 'largeStraight': {
+                    const s = new Set(dice);
+                    const straights = [[1,2,3,4,5],[2,3,4,5,6]];
+                    let bestHave = 0;
+                    for (const st of straights) {
+                        const have = st.filter(x => s.has(x)).length;
+                        if (have > bestHave) bestHave = have;
+                    }
+                    improvement = bestHave >= 4 ? 0.5 * 40 : 0.05 * 40;
+                    break;
+                }
+                case 'kniffel': {
+                    const c = {};
+                    dice.forEach(x => c[x] = (c[x] || 0) + 1);
+                    const maxCount = Math.max(...Object.values(c));
+                    if (maxCount === 5) improvement = 0;
+                    else if (maxCount === 4) improvement = (1/6) * 50;
+                    else if (maxCount === 3) improvement = (1/36) * 50;
+                    else improvement = 0.01 * 50;
+                    break;
+                }
+                case 'chance': {
+                    improvement = 0; // chance verbessert sich nicht durch Weiterspielen
+                    break;
+                }
+            }
+            
+            return current + improvement;
+        }
+        
+        // Findet die optimale Fixierung für die nächsten Würfe
+        function findOptimalHold(player, dice, rollsLeft) {
+            if (rollsLeft === 0) return [false, false, false, false, false];
+            
+            const available = player.scorecard.filter(c => c.score === null);
+            if (available.length === 0) return [false, false, false, false, false];
+            
+            // Für jede Kategorie den besten Fixierungsplan finden
+            let bestHold = [false, false, false, false, false];
+            let bestValue = -1;
+            let bestCategory = null;
+            
+            for (const cat of available) {
+                // Finde beste Fixierung für diese Kategorie
+                for (let mask = 0; mask < 31; mask++) {
+                    const held = [];
+                    for (let i = 0; i < 5; i++) held.push(!!(mask & (1 << i)));
+                    
+                    // Bewerte: Was ist der erwartete Wert, wenn wir diese Fixierung wählen?
+                    const fixed = [];
+                    for (let i = 0; i < 5; i++) if (held[i]) fixed.push(dice[i]);
+                    const numToRoll = 5 - fixed.length;
+                    
+                    // Berechne erwarteten Wert für diese Kategorie mit dieser Fixierung
+                    const rolls = getRolls(numToRoll);
+                    let total = 0;
+                    for (const roll of rolls) {
+                        const newDice = [...fixed, ...roll];
+                        const val = calculateHeuristicValue(cat.id, newDice, rollsLeft - 1);
+                        total += val;
+                    }
+                    const avg = total / rolls.length;
+                    
+                    if (avg > bestValue) {
+                        bestValue = avg;
+                        bestHold = held;
+                        bestCategory = cat;
+                    }
+                }
+            }
+            
+            return { held: bestHold, category: bestCategory, expectedValue: bestValue };
+        }
+        
+        // ==================== GAME STATE ====================
+        const state = {
             players: [],
             currentPlayerIndex: 0,
             dice: [1, 1, 1, 1, 1],
-            heldDice: [false, false, false, false, false],
+            held: [false, false, false, false, false],
             rollsLeft: 3,
-            gameStarted: false,
             gameOver: false,
-            aiSuggestion: null,
-            categories: [
-                { id: 'ones', name: 'Einsen', description: 'Summe aller Einsen', score: null, calculate: (dice) => sumOfNumber(dice, 1) },
-                { id: 'twos', name: 'Zweien', description: 'Summe aller Zweien', score: null, calculate: (dice) => sumOfNumber(dice, 2) },
-                { id: 'threes', name: 'Dreien', description: 'Summe aller Dreien', score: null, calculate: (dice) => sumOfNumber(dice, 3) },
-                { id: 'fours', name: 'Vieren', description: 'Summe aller Vieren', score: null, calculate: (dice) => sumOfNumber(dice, 4) },
-                { id: 'fives', name: 'Fünfen', description: 'Summe aller Fünfen', score: null, calculate: (dice) => sumOfNumber(dice, 5) },
-                { id: 'sixes', name: 'Sechsen', description: 'Summe aller Sechsen', score: null, calculate: (dice) => sumOfNumber(dice, 6) },
-                { id: 'threeOfAKind', name: 'Dreierpasch', description: 'Mindestens 3 gleiche Zahlen', score: null, calculate: threeOfAKind },
-                { id: 'fourOfAKind', name: 'Viererpasch', description: 'Mindestens 4 gleiche Zahlen', score: null, calculate: fourOfAKind },
-                { id: 'fullHouse', name: 'Full House', description: '3 gleiche + 2 andere gleiche', score: null, calculate: fullHouse },
-                { id: 'smallStraight', name: 'Kleine Straße', description: 'Vier aufeinanderfolgende Zahlen', score: null, calculate: smallStraight },
-                { id: 'largeStraight', name: 'Große Straße', description: 'Fünf aufeinanderfolgende Zahlen', score: null, calculate: largeStraight },
-                { id: 'kniffel', name: 'Kniffel', description: 'Fünf gleiche Zahlen', score: null, calculate: kniffel },
-                { id: 'chance', name: 'Chance', description: 'Summe aller Würfel', score: null, calculate: chance }
-            ]
+            aiThinking: false,
+            aiTimeouts: []
         };
-
-        // ============================================================
-        // SCORING HELPER FUNCTIONS
-        // ============================================================
-        function sumOfNumber(dice, number) {
-            return dice.filter(die => die === number).reduce((sum, die) => sum + die, 0);
-        }
-
-        function threeOfAKind(dice) {
-            const counts = getCounts(dice);
-            return Object.values(counts).some(count => count >= 3) ? dice.reduce((a, b) => a + b, 0) : 0;
-        }
-
-        function fourOfAKind(dice) {
-            const counts = getCounts(dice);
-            return Object.values(counts).some(count => count >= 4) ? dice.reduce((a, b) => a + b, 0) : 0;
-        }
-
-        function fullHouse(dice) {
-            const counts = getCounts(dice);
-            const values = Object.values(counts);
-            return (values.includes(3) && values.includes(2)) ? 25 : 0;
-        }
-
-        function smallStraight(dice) {
-            const uniqueSorted = [...new Set(dice)].sort((a, b) => a - b);
-            const uniqueString = uniqueSorted.join('');
-            const straights = ['1234', '2345', '3456'];
-            return straights.some(straight => uniqueString.includes(straight)) ? 30 : 0;
-        }
-
-        function largeStraight(dice) {
-            const sorted = [...dice].sort((a, b) => a - b);
-            const sortedString = sorted.join('');
-            return (sortedString === '12345' || sortedString === '23456') ? 40 : 0;
-        }
-
-        function kniffel(dice) {
-            return new Set(dice).size === 1 ? 50 + dice.reduce((a, b) => a + b, 0) : 0;
-        }
-
-        function chance(dice) {
-            return dice.reduce((a, b) => a + b, 0);
-        }
-
-        function getCounts(dice) {
-            const counts = {};
-            dice.forEach(die => {
-                counts[die] = (counts[die] || 0) + 1;
-            });
-            return counts;
-        }
-
-        // ============================================================
-        // KI / OPTIMAL STRATEGY ENGINE
-        // ============================================================
         
-        // Wahrscheinlichkeitsberechnung für jeden Wurf
-        function getProbabilities(numDice) {
-            if (numDice === 0) return { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
-            const p = 1/6;
-            const result = {};
-            for (let i = 1; i <= 6; i++) {
-                result[i] = 1 - Math.pow(1 - p, numDice);
-            }
-            return result;
-        }
-
-        // Erwartungswert für jede Kategorie beim nächsten Wurf
-        function expectedValueForCategory(categoryId, dice, heldDice, rollsLeft) {
-            const numToRoll = heldDice.filter(h => !h).length;
-            if (numToRoll === 0) return 0;
-            
-            // Monte-Carlo-Simulation für den Erwartungswert
-            const iterations = 500;
-            let totalScore = 0;
-            
-            for (let i = 0; i < iterations; i++) {
-                const simulatedDice = [...dice];
-                for (let j = 0; j < 5; j++) {
-                    if (!heldDice[j]) {
-                        simulatedDice[j] = Math.floor(Math.random() * 6) + 1;
-                    }
-                }
-                
-                // Simuliere verbleibende Würfe optimal
-                let bestScore = 0;
-                if (rollsLeft > 1) {
-                    // Rekursiv: simuliere optimale Entscheidungen für verbleibende Würfe
-                    bestScore = simulateOptimalPlay(categoryId, simulatedDice, rollsLeft - 1);
-                } else {
-                    const category = gameState.categories.find(c => c.id === categoryId);
-                    if (category) {
-                        bestScore = category.calculate(simulatedDice);
-                    }
-                }
-                
-                totalScore += bestScore;
-            }
-            
-            return totalScore / iterations;
-        }
+        // ==================== DOM ====================
+        const $ = id => document.getElementById(id);
+        const setupScreen = $('setupScreen');
+        const gameScreen = $('gameScreen');
+        const gameOverScreen = $('gameOverScreen');
+        const playerCountInput = $('playerCount');
+        const playerNamesContainer = $('playerNamesContainer');
+        const addAiBtn = $('addAiBtn');
+        const startGameBtn = $('startGameBtn');
+        const currentPlayerDisplay = $('currentPlayerDisplay');
+        const rollsLeftDisplay = $('rollsLeftDisplay');
+        const aiInfo = $('aiInfo');
+        const diceContainer = $('diceContainer');
+        const rollBtn = $('rollBtn');
+        const aiHintBtn = $('aiHintBtn');
+        const scoreBtn = $('scoreBtn');
+        const newGameBtn = $('newGameBtn');
+        const gameBoard = $('gameBoard');
+        const winnerName = $('winnerName');
+        const finalScores = $('finalScores');
+        const playAgainBtn = $('playAgainBtn');
         
-        // Simuliert optimales Spiel für verbleibende Würfe
-        function simulateOptimalPlay(categoryId, dice, rollsLeft) {
-            if (rollsLeft === 0) {
-                const category = gameState.categories.find(c => c.id === categoryId);
-                return category ? category.calculate(dice) : 0;
-            }
+        // ==================== SETUP ====================
+        function updatePlayerInputs() {
+            const count = Math.max(1, Math.min(6, parseInt(playerCountInput.value) || 2));
+            playerCountInput.value = count;
             
-            // Für jede mögliche Fixierung den besten Erwartungswert berechnen
-            let bestEV = 0;
-            const numHeld = Math.pow(2, 5);
-            
-            for (let mask = 0; mask < numHeld; mask++) {
-                const held = [];
-                for (let i = 0; i < 5; i++) {
-                    held.push((mask & (1 << i)) !== 0);
-                }
-                
-                // Nur Fixierungen betrachten, die sinnvoll sind (mindestens 1 Würfel nicht fixiert)
-                if (held.every(h => h)) continue;
-                
-                const ev = expectedValueForCategory(categoryId, dice, held, rollsLeft);
-                if (ev > bestEV) bestEV = ev;
-            }
-            
-            return bestEV;
-        }
-
-        // Berechnet den optimalen Zug für den aktuellen Spieler
-        function calculateOptimalPlay(player, dice, heldDice, rollsLeft) {
-            const availableCategories = player.scorecard.filter(cat => cat.score === null);
-            
-            if (availableCategories.length === 0) return null;
-            
-            const results = [];
-            
-            // Für jede verfügbare Kategorie den Erwartungswert berechnen
-            for (const category of availableCategories) {
-                let ev;
-                
-                if (rollsLeft === 0) {
-                    // Keine Würfe mehr: direkter Punktwert
-                    ev = category.calculate(dice);
-                } else {
-                    // Erwartungswert mit optimalem weiteren Spiel
-                    ev = expectedValueForCategory(category.id, dice, heldDice, rollsLeft);
-                }
-                
-                results.push({
-                    category: category,
-                    expectedValue: ev,
-                    currentScore: category.calculate(dice)
-                });
-            }
-            
-            // Sortiere nach Erwartungswert (höchster zuerst)
-            results.sort((a, b) => b.expectedValue - a.expectedValue);
-            
-            return results;
-        }
-
-        // Berechnet die optimale Fixierung für die aktuelle Situation
-        function calculateOptimalHold(player, dice, rollsLeft) {
-            if (rollsLeft === 0) return [false, false, false, false, false];
-            
-            const availableCategories = player.scorecard.filter(cat => cat.score === null);
-            if (availableCategories.length === 0) return [false, false, false, false, false];
-            
-            let bestHold = [false, false, false, false, false];
-            let bestEV = -1;
-            let bestCategory = null;
-            
-            // Für jede mögliche Fixierung
-            for (let mask = 0; mask < 32; mask++) {
-                const held = [];
-                for (let i = 0; i < 5; i++) {
-                    held.push((mask & (1 << i)) !== 0);
-                }
-                
-                // Mindestens 1 Würfel muss gewürfelt werden
-                if (held.every(h => h)) continue;
-                
-                // Für jede Kategorie den Erwartungswert berechnen
-                let totalEV = 0;
-                let bestCatForHold = null;
-                let bestCatEV = -1;
-                
-                for (const category of availableCategories) {
-                    const ev = expectedValueForCategory(category.id, dice, held, rollsLeft);
-                    if (ev > bestCatEV) {
-                        bestCatEV = ev;
-                        bestCatForHold = category;
-                    }
-                }
-                
-                if (bestCatEV > bestEV) {
-                    bestEV = bestCatEV;
-                    bestHold = held;
-                    bestCategory = bestCatForHold;
-                }
-            }
-            
-            return { held: bestHold, category: bestCategory, expectedValue: bestEV };
-        }
-
-        // ============================================================
-        // DOM ELEMENTS
-        // ============================================================
-        const setupScreen = document.getElementById('setupScreen');
-        const gameScreen = document.getElementById('gameScreen');
-        const gameOverScreen = document.getElementById('gameOverScreen');
-        const playerCountInput = document.getElementById('playerCount');
-        const playerNamesContainer = document.getElementById('playerNamesContainer');
-        const addAiBtn = document.getElementById('addAiBtn');
-        const startGameBtn = document.getElementById('startGameBtn');
-        const currentPlayerDisplay = document.getElementById('currentPlayerDisplay');
-        const rollsLeftDisplay = document.getElementById('rollsLeftDisplay');
-        const aiInfo = document.getElementById('aiInfo');
-        const diceContainer = document.getElementById('diceContainer');
-        const rollBtn = document.getElementById('rollBtn');
-        const aiHintBtn = document.getElementById('aiHintBtn');
-        const scoreBtn = document.getElementById('scoreBtn');
-        const newGameBtn = document.getElementById('newGameBtn');
-        const gameBoard = document.getElementById('gameBoard');
-        const winnerName = document.getElementById('winnerName');
-        const finalScores = document.getElementById('finalScores');
-        const playAgainBtn = document.getElementById('playAgainBtn');
-
-        // ============================================================
-        // PLAYER SETUP
-        // ============================================================
-        playerCountInput.addEventListener('input', updatePlayerNameInputs);
-        
-        function updatePlayerNameInputs() {
-            const playerCount = parseInt(playerCountInput.value);
-            const oldInputs = playerNamesContainer.querySelectorAll('.player-input-group');
-            const oldValues = [];
-            oldInputs.forEach(group => {
-                const input = group.querySelector('input[type="text"]');
-                const checkbox = group.querySelector('input[type="checkbox"]');
-                oldValues.push({
-                    name: input.value,
-                    isAI: checkbox.checked
-                });
+            // Speichere alte Werte
+            const old = [];
+            playerNamesContainer.querySelectorAll('.player-input-group').forEach(g => {
+                const nameInput = g.querySelector('input[type="text"]');
+                const aiCheck = g.querySelector('input[type="checkbox"]');
+                old.push({ name: nameInput.value, ai: aiCheck.checked });
             });
             
             playerNamesContainer.innerHTML = '';
-            
-            for (let i = 1; i <= playerCount; i++) {
+            for (let i = 0; i < count; i++) {
                 const group = document.createElement('div');
                 group.className = 'player-input-group';
                 
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.id = `player${i}Name`;
-                input.placeholder = `Spieler ${i} Name`;
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = `player${i}AI`;
-                
-                // Behalte alte Werte bei, wenn vorhanden
-                if (oldValues[i-1]) {
-                    input.value = oldValues[i-1].name;
-                    checkbox.checked = oldValues[i-1].isAI;
-                } else {
-                    input.value = `Spieler ${i}`;
-                }
+                input.id = 'p' + i + 'name';
+                input.placeholder = 'Spieler ' + (i + 1);
+                input.value = old[i] ? old[i].name : 'Spieler ' + (i + 1);
                 
                 const label = document.createElement('label');
                 label.className = 'ai-toggle';
-                label.htmlFor = `player${i}AI`;
-                label.innerHTML = `<i class="fas fa-robot"></i> KI`;
-                label.prepend(checkbox);
+                if (old[i] && old[i].ai) label.classList.add('active');
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = 'p' + i + 'ai';
+                checkbox.checked = old[i] ? old[i].ai : false;
+                checkbox.addEventListener('change', () => {
+                    label.classList.toggle('active', checkbox.checked);
+                });
+                
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(' 🤖 KI'));
                 
                 group.appendChild(input);
                 group.appendChild(label);
-                
-                // Event listener für Toggle-Animation
-                checkbox.addEventListener('change', () => {
-                    if (checkbox.checked) {
-                        label.classList.add('active');
-                    } else {
-                        label.classList.remove('active');
-                    }
-                });
-                
-                if (checkbox.checked) {
-                    label.classList.add('active');
-                }
-                
                 playerNamesContainer.appendChild(group);
             }
         }
-
-        // KI-Spieler generieren
+        
+        playerCountInput.addEventListener('input', updatePlayerInputs);
+        
         addAiBtn.addEventListener('click', () => {
-            const playerCount = parseInt(playerCountInput.value);
-            
-            // Finde den ersten Nicht-KI-Spieler
-            for (let i = 1; i <= playerCount; i++) {
-                const checkbox = document.getElementById(`player${i}AI`);
-                if (checkbox && !checkbox.checked) {
-                    checkbox.checked = true;
-                    const input = document.getElementById(`player${i}Name`);
-                    input.value = `KI Spieler ${i}`;
-                    
-                    // Toggle-Animation
-                    const label = checkbox.closest('.ai-toggle');
-                    if (label) label.classList.add('active');
-                    
-                    break;
+            // Finde ersten Nicht-KI-Spieler und markiere ihn
+            const count = parseInt(playerCountInput.value) || 2;
+            for (let i = 0; i < count; i++) {
+                const cb = $('p' + i + 'ai');
+                if (cb && !cb.checked) {
+                    cb.checked = true;
+                    cb.dispatchEvent(new Event('change'));
+                    const nameInput = $('p' + i + 'name');
+                    if (nameInput) nameInput.value = 'KI Spieler ' + (i + 1);
+                    return;
+                }
+            }
+            // Alle bereits KI - füge einen Spieler hinzu
+            if (count < 6) {
+                playerCountInput.value = count + 1;
+                updatePlayerInputs();
+                const cb = $('p' + count + 'ai');
+                if (cb) {
+                    cb.checked = true;
+                    cb.dispatchEvent(new Event('change'));
+                    const nameInput = $('p' + count + 'name');
+                    if (nameInput) nameInput.value = 'KI Spieler ' + (count + 1);
                 }
             }
         });
-
-        // ============================================================
-        // GAME START
-        // ============================================================
+        
         startGameBtn.addEventListener('click', startGame);
         
         function startGame() {
-            const playerCount = parseInt(playerCountInput.value);
-            gameState.players = [];
+            const count = parseInt(playerCountInput.value) || 2;
+            state.players = [];
             
-            for (let i = 0; i < playerCount; i++) {
-                const playerNameInput = document.getElementById(`player${i+1}Name`);
-                const playerAIInput = document.getElementById(`player${i+1}AI`);
-                const playerName = playerNameInput ? playerNameInput.value : `Spieler ${i+1}`;
-                const isAI = playerAIInput ? playerAIInput.checked : false;
-                
-                gameState.players.push({
+            for (let i = 0; i < count; i++) {
+                const nameInput = $('p' + i + 'name');
+                const aiCheck = $('p' + i + 'ai');
+                state.players.push({
                     id: i,
-                    name: playerName,
-                    isAI: isAI,
-                    scorecard: gameState.categories.map(cat => ({ ...cat, score: null })),
+                    name: nameInput ? nameInput.value || 'Spieler ' + (i + 1) : 'Spieler ' + (i + 1),
+                    isAI: aiCheck ? aiCheck.checked : false,
+                    scorecard: CATEGORIES.map(c => ({ id: c.id, name: c.name, calc: c.calc, score: null })),
                     upperTotal: 0,
                     lowerTotal: 0,
-                    grandTotal: 0,
-                    bonus: 0
+                    bonus: 0,
+                    grandTotal: 0
                 });
             }
             
-            resetGameState();
+            state.currentPlayerIndex = 0;
+            state.dice = [1, 1, 1, 1, 1];
+            state.held = [false, false, false, false, false];
+            state.rollsLeft = 3;
+            state.gameOver = false;
+            state.aiThinking = false;
+            clearAITimeouts();
+            
             setupScreen.style.display = 'none';
             gameScreen.style.display = 'block';
             gameOverScreen.style.display = 'none';
+            aiInfo.classList.remove('visible');
             
-            createDiceElements();
-            createScorecards();
-            updateGameDisplay();
+            createDiceUI();
+            renderScorecards();
+            updateUI();
             
-            // Wenn der erste Spieler eine KI ist, automatisch starten
-            if (gameState.players[gameState.currentPlayerIndex].isAI) {
-                setTimeout(() => runAITurn(), 800);
+            // Prüfe ob erster Spieler KI ist
+            if (state.players[0].isAI) {
+                scheduleAITurn();
             }
         }
-
-        function resetGameState() {
-            gameState.currentPlayerIndex = 0;
-            gameState.dice = [1, 1, 1, 1, 1];
-            gameState.heldDice = [false, false, false, false, false];
-            gameState.rollsLeft = 3;
-            gameState.gameStarted = true;
-            gameState.gameOver = false;
-            gameState.aiSuggestion = null;
-        }
-
-        // ============================================================
-        // DICE RENDERING
-        // ============================================================
-        function createDiceElements() {
+        
+        // ==================== UI ====================
+        function createDiceUI() {
             diceContainer.innerHTML = '';
-            
             for (let i = 0; i < 5; i++) {
                 const die = document.createElement('div');
                 die.className = 'dice';
-                die.textContent = gameState.dice[i];
+                die.textContent = state.dice[i];
                 die.dataset.index = i;
-                
-                die.addEventListener('click', () => toggleHoldDie(i));
-                
+                die.addEventListener('click', () => onDieClick(i));
                 diceContainer.appendChild(die);
             }
-            
-            updateDiceDisplay();
         }
-
-        function toggleHoldDie(index) {
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-            
-            // KI-Spieler dürfen nicht manuell fixiert werden
-            if (currentPlayer.isAI) return;
-            
-            if (gameState.rollsLeft < 3 && gameState.rollsLeft > 0) {
-                gameState.heldDice[index] = !gameState.heldDice[index];
-                updateDiceDisplay();
-                updateAISuggestionAfterHold();
-            }
-        }
-
-        function updateDiceDisplay() {
-            const diceElements = document.querySelectorAll('.dice');
-            
-            diceElements.forEach((die, index) => {
-                die.textContent = gameState.dice[index];
-                
-                if (gameState.heldDice[index]) {
-                    die.classList.add('held');
-                } else {
-                    die.classList.remove('held');
-                }
+        
+        function updateDiceUI() {
+            const diceEls = diceContainer.querySelectorAll('.dice');
+            diceEls.forEach((el, i) => {
+                el.textContent = state.dice[i];
+                el.classList.toggle('held', state.held[i]);
+                const isAI = state.players[state.currentPlayerIndex].isAI;
+                el.classList.toggle('disabled', isAI);
             });
         }
-
-        // ============================================================
-        // DICE ROLLING
-        // ============================================================
-        rollBtn.addEventListener('click', () => {
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-            if (!currentPlayer.isAI) {
-                rollDice();
-            }
-        });
         
-        function rollDice() {
-            if (gameState.rollsLeft > 0) {
-                for (let i = 0; i < 5; i++) {
-                    if (!gameState.heldDice[i]) {
-                        gameState.dice[i] = Math.floor(Math.random() * 6) + 1;
-                    }
-                }
-                
-                gameState.rollsLeft--;
-                updateGameDisplay();
-                
-                // KI-Tipp aktualisieren
-                if (gameState.rollsLeft < 3) {
-                    updateAISuggestion();
-                }
-                
-                if (gameState.rollsLeft === 0) {
-                    scoreBtn.disabled = false;
-                    calculatePossibleScores();
-                    highlightOptimalCategory();
-                }
-            }
+        function onDieClick(index) {
+            const player = state.players[state.currentPlayerIndex];
+            if (player.isAI || state.rollsLeft === 3 || state.rollsLeft === 0) return;
+            if (state.aiThinking) return;
+            
+            state.held[index] = !state.held[index];
+            updateDiceUI();
+            
+            // Entferne KI-Vorschläge wenn manuell geändert
+            diceContainer.querySelectorAll('.dice').forEach(d => d.classList.remove('ai-suggestion'));
         }
-
-        // ============================================================
-        // SCORECARD RENDERING
-        // ============================================================
-        function createScorecards() {
+        
+        function updateUI() {
+            const player = state.players[state.currentPlayerIndex];
+            if (!player) return;
+            
+            currentPlayerDisplay.textContent = player.name + ' ist am Zug';
+            currentPlayerDisplay.classList.toggle('ai-player', player.isAI);
+            
+            rollsLeftDisplay.textContent = 'Würfe übrig: ' + state.rollsLeft;
+            
+            updateDiceUI();
+            renderScorecards();
+            
+            rollBtn.disabled = state.rollsLeft === 0 || player.isAI || state.aiThinking;
+            scoreBtn.disabled = state.rollsLeft > 0 || player.isAI || state.aiThinking;
+            aiHintBtn.disabled = player.isAI || state.aiThinking;
+        }
+        
+        function renderScorecards() {
             gameBoard.innerHTML = '';
             
-            gameState.players.forEach((player, playerIndex) => {
-                const scorecard = document.createElement('div');
-                scorecard.className = 'scorecard';
-                if (player.isAI) {
-                    scorecard.classList.add('ai-scorecard');
-                }
-                scorecard.id = `scorecard-${playerIndex}`;
+            state.players.forEach((player, pIdx) => {
+                const card = document.createElement('div');
+                card.className = 'scorecard';
+                if (player.isAI) card.classList.add('ai-scorecard');
+                if (pIdx === state.currentPlayerIndex) card.classList.add('active');
                 
-                const playerHeader = document.createElement('div');
-                playerHeader.className = 'player-header';
-                
-                const playerName = document.createElement('h3');
-                playerName.textContent = player.name;
-                if (playerIndex === gameState.currentPlayerIndex) {
-                    playerName.style.color = player.isAI ? '#9b59b6' : '#3498db';
-                }
-                
-                const totalScore = document.createElement('div');
-                totalScore.className = 'total-score';
-                totalScore.textContent = `Punkte: ${player.grandTotal}`;
-                
-                playerHeader.appendChild(playerName);
-                playerHeader.appendChild(totalScore);
-                scorecard.appendChild(playerHeader);
+                const header = document.createElement('div');
+                header.className = 'player-header';
+                const nameEl = document.createElement('h3');
+                nameEl.textContent = player.name + (player.isAI ? ' 🤖' : '');
+                const totalEl = document.createElement('div');
+                totalEl.className = 'total-score';
+                totalEl.textContent = player.grandTotal;
+                header.appendChild(nameEl);
+                header.appendChild(totalEl);
+                card.appendChild(header);
                 
                 const table = document.createElement('table');
                 const thead = document.createElement('thead');
+                thead.innerHTML = '<tr><th>Kategorie</th><th style="text-align:center;">Punkte</th></tr>';
+                table.appendChild(thead);
+                
                 const tbody = document.createElement('tbody');
                 
-                const headerRow = document.createElement('tr');
-                const thName = document.createElement('th');
-                thName.textContent = 'Kategorie';
-                const thScore = document.createElement('th');
-                thScore.textContent = 'Punkte';
-                
-                headerRow.appendChild(thName);
-                headerRow.appendChild(thScore);
-                thead.appendChild(headerRow);
-                
-                player.scorecard.forEach((category, catIndex) => {
-                    const row = document.createElement('tr');
-                    
+                player.scorecard.forEach((cat, catIdx) => {
+                    const tr = document.createElement('tr');
                     const tdName = document.createElement('td');
-                    tdName.textContent = category.name;
-                    tdName.title = category.description;
-                    
+                    tdName.textContent = cat.name;
                     const tdScore = document.createElement('td');
                     tdScore.className = 'score-cell';
-                    tdScore.dataset.playerIndex = playerIndex;
-                    tdScore.dataset.categoryIndex = catIndex;
-                    tdScore.dataset.categoryId = category.id;
+                    tdScore.dataset.playerIndex = pIdx;
+                    tdScore.dataset.categoryIndex = catIdx;
                     
-                    if (category.score !== null) {
-                        tdScore.textContent = category.score;
+                    if (cat.score !== null) {
+                        tdScore.textContent = cat.score;
                         tdScore.classList.add('scored');
-                    } else if (playerIndex === gameState.currentPlayerIndex && gameState.rollsLeft === 0 && !player.isAI) {
-                        const possibleScore = category.calculate(gameState.dice);
-                        tdScore.textContent = possibleScore > 0 ? possibleScore : '0';
-                        tdScore.addEventListener('click', () => scoreCategory(playerIndex, catIndex));
+                    } else if (pIdx === state.currentPlayerIndex && state.rollsLeft === 0 && !player.isAI) {
+                        const previewScore = cat.calc(state.dice);
+                        tdScore.textContent = previewScore;
+                        tdScore.addEventListener('click', () => scoreCategory(pIdx, catIdx));
                     } else {
                         tdScore.textContent = '-';
                     }
                     
-                    row.appendChild(tdName);
-                    row.appendChild(tdScore);
-                    tbody.appendChild(row);
+                    tr.appendChild(tdName);
+                    tr.appendChild(tdScore);
+                    tbody.appendChild(tr);
                 });
                 
-                const bonusRow = document.createElement('tr');
-                bonusRow.innerHTML = `
-                    <td><strong>Bonus (ab 63)</strong></td>
-                    <td style="text-align:center;"><strong>${player.bonus}</strong></td>
-                `;
-                tbody.appendChild(bonusRow);
+                // Zusammenfassungen
+                const bonusTr = document.createElement('tr');
+                bonusTr.innerHTML = '<td><strong>Bonus (≥63)</strong></td><td style="text-align:center;"><strong>' + player.bonus + '</strong></td>';
+                tbody.appendChild(bonusTr);
                 
-                const upperTotalRow = document.createElement('tr');
-                upperTotalRow.innerHTML = `
-                    <td><strong>Oberer Teil Summe</strong></td>
-                    <td style="text-align:center;"><strong>${player.upperTotal}</strong></td>
-                `;
-                tbody.appendChild(upperTotalRow);
+                const upperTr = document.createElement('tr');
+                upperTr.innerHTML = '<td><strong>Oben</strong></td><td style="text-align:center;"><strong>' + player.upperTotal + '</strong></td>';
+                tbody.appendChild(upperTr);
                 
-                const lowerTotalRow = document.createElement('tr');
-                lowerTotalRow.innerHTML = `
-                    <td><strong>Unterer Teil Summe</strong></td>
-                    <td style="text-align:center;"><strong>${player.lowerTotal}</strong></td>
-                `;
-                tbody.appendChild(lowerTotalRow);
+                const lowerTr = document.createElement('tr');
+                lowerTr.innerHTML = '<td><strong>Unten</strong></td><td style="text-align:center;"><strong>' + player.lowerTotal + '</strong></td>';
+                tbody.appendChild(lowerTr);
                 
-                const grandTotalRow = document.createElement('tr');
-                grandTotalRow.innerHTML = `
-                    <td><strong>Gesamtsumme</strong></td>
-                    <td style="text-align:center;"><strong>${player.grandTotal}</strong></td>
-                `;
-                tbody.appendChild(grandTotalRow);
+                const totalTr = document.createElement('tr');
+                totalTr.innerHTML = '<td><strong>GESAMT</strong></td><td style="text-align:center;color:#2ecc71;"><strong>' + player.grandTotal + '</strong></td>';
+                tbody.appendChild(totalTr);
                 
-                table.appendChild(thead);
                 table.appendChild(tbody);
-                scorecard.appendChild(table);
-                gameBoard.appendChild(scorecard);
+                card.appendChild(table);
+                gameBoard.appendChild(card);
             });
         }
-
-        // ============================================================
-        // SCORING
-        // ============================================================
-        function calculatePossibleScores() {
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+        
+        // ==================== SCORING ====================
+        function scoreCategory(playerIndex, catIndex) {
+            if (playerIndex !== state.currentPlayerIndex) return;
+            if (state.rollsLeft > 0) return;
             
-            currentPlayer.scorecard.forEach((category, index) => {
-                if (category.score === null) {
-                    const possibleScore = category.calculate(gameState.dice);
-                    const scoreCell = document.querySelector(
-                        `[data-player-index="${gameState.currentPlayerIndex}"][data-category-index="${index}"]`
-                    );
-                    
-                    if (scoreCell && !scoreCell.classList.contains('scored')) {
-                        scoreCell.textContent = possibleScore > 0 ? possibleScore : '0';
-                        
-                        // Event listener für manuelles Eintragen
-                        if (!currentPlayer.isAI) {
-                            scoreCell.replaceWith(scoreCell.cloneNode(true));
-                            const newScoreCell = document.querySelector(
-                                `[data-player-index="${gameState.currentPlayerIndex}"][data-category-index="${index}"]`
-                            );
-                            newScoreCell.addEventListener('click', () => scoreCategory(gameState.currentPlayerIndex, index));
-                        }
-                    }
-                }
-            });
+            const player = state.players[playerIndex];
+            const cat = player.scorecard[catIndex];
+            if (cat.score !== null) return;
+            
+            cat.score = cat.calc(state.dice);
+            recalcTotals(playerIndex);
+            advanceTurn();
         }
-
-        function scoreCategory(playerIndex, categoryIndex) {
-            if (playerIndex !== gameState.currentPlayerIndex || gameState.rollsLeft > 0) {
-                return;
-            }
+        
+        function recalcTotals(playerIndex) {
+            const player = state.players[playerIndex];
+            const upper = ['ones','twos','threes','fours','fives','sixes'];
             
-            const player = gameState.players[playerIndex];
-            const category = player.scorecard[categoryIndex];
-            
-            if (category.score !== null) {
-                return;
-            }
-            
-            category.score = category.calculate(gameState.dice);
-            updatePlayerTotals(playerIndex);
-            nextTurn();
-        }
-
-        // Optimalen Wert eintragen (Button)
-        scoreBtn.addEventListener('click', () => {
-            if (gameState.rollsLeft > 0) return;
-            
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-            const optimal = calculateOptimalPlay(currentPlayer, gameState.dice, gameState.heldDice, 0);
-            
-            if (optimal && optimal.length > 0) {
-                const best = optimal[0];
-                const categoryIndex = currentPlayer.scorecard.findIndex(
-                    cat => cat.id === best.category.id && cat.score === null
-                );
-                
-                if (categoryIndex !== -1) {
-                    scoreCategory(gameState.currentPlayerIndex, categoryIndex);
-                }
-            }
-        });
-
-        function updatePlayerTotals(playerIndex) {
-            const player = gameState.players[playerIndex];
-            
-            const upperCategories = player.scorecard.slice(0, 6);
-            player.upperTotal = upperCategories
-                .filter(cat => cat.score !== null)
-                .reduce((sum, cat) => sum + cat.score, 0);
-            
+            player.upperTotal = player.scorecard
+                .filter(c => upper.includes(c.id) && c.score !== null)
+                .reduce((s, c) => s + c.score, 0);
             player.bonus = player.upperTotal >= 63 ? 35 : 0;
-            
-            const lowerCategories = player.scorecard.slice(6);
-            player.lowerTotal = lowerCategories
-                .filter(cat => cat.score !== null)
-                .reduce((sum, cat) => sum + cat.score, 0);
-            
+            player.lowerTotal = player.scorecard
+                .filter(c => !upper.includes(c.id) && c.score !== null)
+                .reduce((s, c) => s + c.score, 0);
             player.grandTotal = player.upperTotal + player.bonus + player.lowerTotal;
         }
-
-        // ============================================================
-        // TURN MANAGEMENT
-        // ============================================================
-        function nextTurn() {
-            const allPlayersFinished = gameState.players.every(player => 
-                player.scorecard.every(cat => cat.score !== null)
-            );
+        
+        // ==================== TURN ====================
+        function advanceTurn() {
+            if (state.gameOver) return;
             
-            if (allPlayersFinished) {
-                endGame();
-                return;
-            }
+            // Prüfe ob Spiel vorbei
+            const allDone = state.players.every(p => p.scorecard.every(c => c.score !== null));
+            if (allDone) { endGame(); return; }
             
-            let nextPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+            // Nächsten Spieler mit freien Kategorien finden
+            let next = (state.currentPlayerIndex + 1) % state.players.length;
             let attempts = 0;
-            
-            while (attempts < gameState.players.length) {
-                const nextPlayer = gameState.players[nextPlayerIndex];
-                const hasUnscoredCategories = nextPlayer.scorecard.some(cat => cat.score === null);
-                
-                if (hasUnscoredCategories) {
-                    break;
-                }
-                
-                nextPlayerIndex = (nextPlayerIndex + 1) % gameState.players.length;
+            while (attempts < state.players.length && state.players[next].scorecard.every(c => c.score !== null)) {
+                next = (next + 1) % state.players.length;
                 attempts++;
             }
             
-            gameState.currentPlayerIndex = nextPlayerIndex;
-            gameState.rollsLeft = 3;
-            gameState.heldDice = [false, false, false, false, false];
-            gameState.dice = [1, 1, 1, 1, 1];
-            gameState.aiSuggestion = null;
+            state.currentPlayerIndex = next;
+            state.rollsLeft = 3;
+            state.held = [false, false, false, false, false];
+            state.dice = [1, 1, 1, 1, 1];
+            state.aiThinking = false;
+            
+            // KI-Vorschläge entfernen
+            diceContainer.querySelectorAll('.dice').forEach(d => {
+                d.classList.remove('ai-suggestion', 'held');
+            });
+            
             aiInfo.classList.remove('visible');
             aiInfo.textContent = '';
             
-            updateGameDisplay();
+            // Vorschlag-Highlights entfernen
+            gameBoard.querySelectorAll('.score-cell').forEach(c => c.classList.remove('recommended'));
             
-            // Wenn der nächste Spieler eine KI ist, automatisch starten
-            if (gameState.players[gameState.currentPlayerIndex].isAI) {
-                setTimeout(() => runAITurn(), 800);
+            updateUI();
+            
+            // KI-Turn starten
+            if (state.players[state.currentPlayerIndex].isAI) {
+                scheduleAITurn();
             }
-        }
-
-        // ============================================================
-        // KI TURN LOGIC
-        // ============================================================
-        function runAITurn() {
-            if (gameState.gameOver) return;
-            
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-            if (!currentPlayer.isAI) return;
-            
-            // Zeige KI-Info
-            aiInfo.classList.add('visible');
-            aiInfo.innerHTML = `<i class="fas fa-robot"></i> ${currentPlayer.name} denkt nach...`;
-            
-            // Würfeln
-            gameState.dice = [1, 1, 1, 1, 1];
-            gameState.heldDice = [false, false, false, false, false];
-            gameState.rollsLeft = 3;
-            
-            // Erster Wurf
-            setTimeout(() => {
-                performAIRoll();
-            }, 500);
         }
         
-        function performAIRoll() {
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-            
-            // Würfeln
-            for (let i = 0; i < 5; i++) {
-                if (!gameState.heldDice[i]) {
-                    gameState.dice[i] = Math.floor(Math.random() * 6) + 1;
-                }
-            }
-            
-            gameState.rollsLeft--;
-            updateDiceDisplay();
-            updateGameDisplay();
-            
-            aiInfo.innerHTML = `<i class="fas fa-robot"></i> ${currentPlayer.name}: Wurf ${3 - gameState.rollsLeft} → ${gameState.dice.join(', ')}`;
-            
-            if (gameState.rollsLeft > 0) {
-                // Optimale Fixierung berechnen
-                setTimeout(() => {
-                    const optimal = calculateOptimalHold(currentPlayer, gameState.dice, gameState.rollsLeft);
-                    
-                    if (optimal) {
-                        gameState.heldDice = optimal.held;
-                        updateDiceDisplay();
-                        
-                        const heldIndices = gameState.heldDice
-                            .map((held, i) => held ? i : -1)
-                            .filter(i => i !== -1);
-                        
-                        if (heldIndices.length > 0) {
-                            aiInfo.innerHTML = `<i class="fas fa-robot"></i> ${currentPlayer.name}: Fixiere Würfel ${heldIndices.map(i => i+1).join(', ')} (Ziel: ${optimal.category.name})`;
-                        } else {
-                            aiInfo.innerHTML = `<i class="fas fa-robot"></i> ${currentPlayer.name}: Würfelt alle neu (Ziel: ${optimal.category.name})`;
-                        }
-                        
-                        setTimeout(() => performAIRoll(), 600);
-                    }
-                }, 400);
-            } else {
-                // Alle Würfe verbraucht: optimale Kategorie wählen
-                setTimeout(() => {
-                    const optimal = calculateOptimalPlay(currentPlayer, gameState.dice, gameState.heldDice, 0);
-                    
-                    if (optimal && optimal.length > 0) {
-                        const best = optimal[0];
-                        const categoryIndex = currentPlayer.scorecard.findIndex(
-                            cat => cat.id === best.category.id && cat.score === null
-                        );
-                        
-                        if (categoryIndex !== -1) {
-                            aiInfo.innerHTML = `<i class="fas fa-robot"></i> ${currentPlayer.name} wählt ${best.category.name} für ${best.currentScore} Punkte`;
-                            
-                            setTimeout(() => {
-                                currentPlayer.scorecard[categoryIndex].score = best.currentScore;
-                                updatePlayerTotals(gameState.currentPlayerIndex);
-                                nextTurn();
-                            }, 800);
-                        }
-                    }
-                }, 500);
-            }
-        }
-
-        // ============================================================
-        // AI HINT (für menschliche Spieler)
-        // ============================================================
-        aiHintBtn.addEventListener('click', () => {
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-            
-            if (currentPlayer.isAI) return;
-            
-            aiInfo.classList.add('visible');
-            
-            if (gameState.rollsLeft === 3) {
-                aiInfo.innerHTML = `<i class="fas fa-robot"></i> Tipp: Würfle zuerst, um eine Empfehlung zu erhalten.`;
-                return;
-            }
-            
-            if (gameState.rollsLeft > 0) {
-                // Empfehlung für Fixierung
-                const optimal = calculateOptimalHold(currentPlayer, gameState.dice, gameState.rollsLeft);
-                
-                if (optimal) {
-                    // Setze visuelle Hervorhebung
-                    document.querySelectorAll('.dice').forEach((die, i) => {
-                        die.classList.remove('ai-suggestion');
-                        if (optimal.held[i]) {
-                            die.classList.add('ai-suggestion');
-                        }
-                    });
-                    
-                    const heldIndices = optimal.held
-                        .map((held, i) => held ? i : -1)
-                        .filter(i => i !== -1);
-                    
-                    const heldText = heldIndices.length > 0 
-                        ? `Fixiere Würfel ${heldIndices.map(i => i+1).join(', ')}` 
-                        : 'Würfle alle neu';
-                    
-                    aiInfo.innerHTML = `<i class="fas fa-robot"></i> KI-Tipp: ${heldText} (Ziel: ${optimal.category.name}, Erwartungswert: ${Math.round(optimal.expectedValue)} Punkte)`;
-                }
-            } else {
-                // Empfehlung für Kategorie
-                const optimal = calculateOptimalPlay(currentPlayer, gameState.dice, gameState.heldDice, 0);
-                
-                if (optimal && optimal.length > 0) {
-                    const best = optimal[0];
-                    
-                    // Hebe die beste Kategorie hervor
-                    document.querySelectorAll('.score-cell').forEach(cell => {
-                        cell.classList.remove('recommended');
-                        if (cell.dataset.categoryId === best.category.id && 
-                            !cell.classList.contains('scored') &&
-                            parseInt(cell.dataset.playerIndex) === gameState.currentPlayerIndex) {
-                            cell.classList.add('recommended');
-                        }
-                    });
-                    
-                    aiInfo.innerHTML = `<i class="fas fa-robot"></i> KI-Tipp: Wähle <strong>${best.category.name}</strong> für <strong>${best.currentScore} Punkte</strong>.`;
-                }
-            }
-        });
-
-        function updateAISuggestion() {
-            if (gameState.rollsLeft > 0 && gameState.rollsLeft < 3) {
-                const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-                if (!currentPlayer.isAI) {
-                    const optimal = calculateOptimalHold(currentPlayer, gameState.dice, gameState.rollsLeft);
-                    if (optimal) {
-                        document.querySelectorAll('.dice').forEach((die, i) => {
-                            die.classList.remove('ai-suggestion');
-                            if (optimal.held[i]) {
-                                die.classList.add('ai-suggestion');
-                            }
-                        });
-                    }
-                }
-            }
-        }
-
-        function updateAISuggestionAfterHold() {
-            // Entferne alte Empfehlungen
-            document.querySelectorAll('.dice').forEach(die => {
-                die.classList.remove('ai-suggestion');
-            });
-        }
-
-        function highlightOptimalCategory() {
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-            if (currentPlayer.isAI) return;
-            
-            const optimal = calculateOptimalPlay(currentPlayer, gameState.dice, gameState.heldDice, 0);
-            if (optimal && optimal.length > 0) {
-                const best = optimal[0];
-                
-                document.querySelectorAll('.score-cell').forEach(cell => {
-                    cell.classList.remove('recommended');
-                    if (cell.dataset.categoryId === best.category.id && 
-                        !cell.classList.contains('scored') &&
-                        parseInt(cell.dataset.playerIndex) === gameState.currentPlayerIndex) {
-                        cell.classList.add('recommended');
-                    }
-                });
-            }
-        }
-
-        // ============================================================
-        // GAME DISPLAY UPDATE
-        // ============================================================
-        function updateGameDisplay() {
-            const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-            
-            currentPlayerDisplay.textContent = `${currentPlayer.name} ist am Zug`;
-            currentPlayerDisplay.className = 'current-player';
-            if (currentPlayer.isAI) {
-                currentPlayerDisplay.classList.add('ai-player');
-            }
-            
-            rollsLeftDisplay.textContent = `Würfe übrig: ${gameState.rollsLeft}`;
-            
-            updateDiceDisplay();
-            
-            rollBtn.disabled = gameState.rollsLeft === 0 || currentPlayer.isAI;
-            scoreBtn.disabled = gameState.rollsLeft > 0 || currentPlayer.isAI;
-            
-            createScorecards();
-        }
-
-        // ============================================================
-        // GAME END
-        // ============================================================
         function endGame() {
-            gameState.gameOver = true;
+            state.gameOver = true;
+            clearAITimeouts();
             
-            let winner = gameState.players[0];
-            let maxScore = winner.grandTotal;
-            let isTie = false;
+            const sorted = [...state.players].sort((a, b) => b.grandTotal - a.grandTotal);
+            const topScore = sorted[0].grandTotal;
+            const winners = sorted.filter(p => p.grandTotal === topScore);
             
-            for (let i = 1; i < gameState.players.length; i++) {
-                if (gameState.players[i].grandTotal > maxScore) {
-                    winner = gameState.players[i];
-                    maxScore = winner.grandTotal;
-                    isTie = false;
-                } else if (gameState.players[i].grandTotal === maxScore) {
-                    isTie = true;
-                }
-            }
-            
-            if (isTie) {
-                winnerName.textContent = "Unentschieden!";
+            if (winners.length > 1) {
+                winnerName.textContent = '🤝 Unentschieden!';
             } else {
-                const aiText = winner.isAI ? ' 🤖' : '';
-                winnerName.textContent = `${winner.name}${aiText} gewinnt!`;
+                winnerName.textContent = '🏆 ' + winners[0].name + ' gewinnt!';
             }
             
-            let scoresText = "Finale Punktstände:<br>";
-            gameState.players.forEach(player => {
-                const aiText = player.isAI ? ' 🤖' : '';
-                scoresText += `${player.name}${aiText}: ${player.grandTotal} Punkte<br>`;
-            });
-            finalScores.innerHTML = scoresText;
+            finalScores.innerHTML = state.players.map(p => 
+                p.name + (p.isAI ? ' 🤖' : '') + ': <strong>' + p.grandTotal + '</strong> Punkte'
+            ).join('<br>');
             
             gameScreen.style.display = 'none';
             gameOverScreen.style.display = 'block';
         }
-
-        // ============================================================
-        // NAVIGATION BUTTONS
-        // ============================================================
+        
+        // ==================== DICE ACTIONS ====================
+        rollBtn.addEventListener('click', () => {
+            const player = state.players[state.currentPlayerIndex];
+            if (player.isAI || state.aiThinking) return;
+            if (state.rollsLeft === 0) return;
+            doRoll();
+        });
+        
+        function doRoll() {
+            if (state.rollsLeft === 0) return;
+            
+            for (let i = 0; i < 5; i++) {
+                if (!state.held[i]) {
+                    state.dice[i] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+            state.rollsLeft--;
+            
+            updateUI();
+            
+            if (state.rollsLeft === 0) {
+                // Letzter Wurf - zeige optimalen Kategorie-Vorschlag
+                const player = state.players[state.currentPlayerIndex];
+                if (!player.isAI) {
+                    showOptimalCategoryHint();
+                }
+            }
+        }
+        
+        function showOptimalCategoryHint() {
+            const player = state.players[state.currentPlayerIndex];
+            const optimal = findOptimalMove(player, state.dice, 0);
+            if (!optimal) return;
+            
+            // Hebe beste Kategorie hervor
+            const scoreCells = gameBoard.querySelectorAll('.score-cell');
+            scoreCells.forEach(cell => {
+                cell.classList.remove('recommended');
+                const pi = parseInt(cell.dataset.playerIndex);
+                const ci = parseInt(cell.dataset.categoryIndex);
+                if (pi === state.currentPlayerIndex && 
+                    player.scorecard[ci].id === optimal.category.id &&
+                    !cell.classList.contains('scored')) {
+                    cell.classList.add('recommended');
+                }
+            });
+        }
+        
+        // ==================== OPTIMAL SCORE BUTTON ====================
+        scoreBtn.addEventListener('click', () => {
+            if (state.rollsLeft > 0) return;
+            const player = state.players[state.currentPlayerIndex];
+            if (player.isAI) return;
+            
+            const optimal = findOptimalMove(player, state.dice, 0);
+            if (!optimal) return;
+            
+            const catIndex = player.scorecard.findIndex(c => c.id === optimal.category.id && c.score === null);
+            if (catIndex === -1) return;
+            
+            scoreCategory(state.currentPlayerIndex, catIndex);
+        });
+        
+        // ==================== KI HINT BUTTON ====================
+        aiHintBtn.addEventListener('click', () => {
+            const player = state.players[state.currentPlayerIndex];
+            if (player.isAI || state.aiThinking) return;
+            
+            aiInfo.classList.add('visible');
+            
+            if (state.rollsLeft === 3) {
+                aiInfo.innerHTML = '<i class="fas fa-robot"></i> Erst würfeln, dann kann ich einen Tipp geben.';
+                return;
+            }
+            
+            if (state.rollsLeft > 0) {
+                // Tipp für Fixierung
+                const optimal = findOptimalHold(player, state.dice, state.rollsLeft);
+                if (!optimal) return;
+                
+                // Visuelle Hervorhebung
+                const diceEls = diceContainer.querySelectorAll('.dice');
+                diceEls.forEach((el, i) => {
+                    el.classList.remove('ai-suggestion');
+                    if (optimal.held[i]) el.classList.add('ai-suggestion');
+                });
+                
+                const heldIdx = optimal.held.map((h, i) => h ? i + 1 : null).filter(x => x !== null);
+                const heldText = heldIdx.length > 0 
+                    ? 'Fixiere Würfel ' + heldIdx.join(', ') 
+                    : 'Würfle alle neu';
+                
+                aiInfo.innerHTML = '<i class="fas fa-robot"></i> <strong>' + heldText + '</strong> (Ziel: ' + optimal.category.name + ', EW: ' + Math.round(optimal.expectedValue) + ')';
+            } else {
+                // Tipp für Kategorie
+                const optimal = findOptimalMove(player, state.dice, 0);
+                if (!optimal) return;
+                
+                const scoreCells = gameBoard.querySelectorAll('.score-cell');
+                scoreCells.forEach(cell => {
+                    cell.classList.remove('recommended');
+                    const pi = parseInt(cell.dataset.playerIndex);
+                    const ci = parseInt(cell.dataset.categoryIndex);
+                    if (pi === state.currentPlayerIndex && 
+                        player.scorecard[ci].id === optimal.category.id &&
+                        !cell.classList.contains('scored')) {
+                        cell.classList.add('recommended');
+                    }
+                });
+                
+                aiInfo.innerHTML = '<i class="fas fa-robot"></i> Wähle <strong>' + optimal.category.name + '</strong> für <strong>' + optimal.score + ' Punkte</strong>';
+            }
+        });
+        
+        // ==================== KI TURN ====================
+        function clearAITimeouts() {
+            state.aiTimeouts.forEach(t => clearTimeout(t));
+            state.aiTimeouts = [];
+        }
+        
+        function scheduleAITurn() {
+            if (state.gameOver) return;
+            const player = state.players[state.currentPlayerIndex];
+            if (!player || !player.isAI) return;
+            
+            state.aiThinking = true;
+            updateUI();
+            
+            aiInfo.classList.add('visible');
+            aiInfo.innerHTML = '<i class="fas fa-robot"></i> ' + player.name + ' würfelt...';
+            
+            // Erster Wurf
+            addAITimeout(() => aiRollStep(), 500);
+        }
+        
+        function addAITimeout(fn, ms) {
+            const t = setTimeout(fn, ms);
+            state.aiTimeouts.push(t);
+            return t;
+        }
+        
+        function aiRollStep() {
+            if (state.gameOver) return;
+            const player = state.players[state.currentPlayerIndex];
+            if (!player || !player.isAI) return;
+            
+            // Würfeln
+            for (let i = 0; i < 5; i++) {
+                if (!state.held[i]) {
+                    state.dice[i] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+            state.rollsLeft--;
+            updateUI();
+            
+            const rollNum = 3 - state.rollsLeft;
+            aiInfo.innerHTML = '<i class="fas fa-robot"></i> ' + player.name + ' - Wurf ' + rollNum + ': ' + state.dice.join(' · ');
+            
+            if (state.rollsLeft > 0) {
+                // Entscheidung: fixieren?
+                addAITimeout(() => {
+                    const optimal = findOptimalHold(player, state.dice, state.rollsLeft);
+                    if (!optimal) { 
+                        // Fallback
+                        state.held = [false, false, false, false, false];
+                        aiRollStep();
+                        return;
+                    }
+                    
+                    // Prüfe: lohnt es sich, weiter zu würfeln?
+                    const currentScore = optimal.category.calc(state.dice);
+                    if (optimal.expectedValue <= currentScore && state.rollsLeft < 3) {
+                        // Aufhören, wenn Erwartungswert nicht mehr besser
+                        // Aber nur wenn wir schon mindestens einmal gewürfelt haben
+                        // und der Score "gut" ist
+                        if (currentScore >= 20) {
+                            // Score ist schon gut - höre auf
+                            finishAITurn();
+                            return;
+                        }
+                    }
+                    
+                    // Ansonsten: fixiere und würfle weiter
+                    state.held = optimal.held;
+                    updateDiceUI();
+                    
+                    const heldIdx = optimal.held.map((h, i) => h ? i + 1 : null).filter(x => x !== null);
+                    if (heldIdx.length > 0) {
+                        aiInfo.innerHTML += '<br><i class="fas fa-robot"></i> Fixiere: ' + heldIdx.join(', ') + ' → ' + optimal.category.name;
+                    } else {
+                        aiInfo.innerHTML += '<br><i class="fas fa-robot"></i> Würfle alle neu → ' + optimal.category.name;
+                    }
+                    
+                    addAITimeout(() => aiRollStep(), 600);
+                }, 400);
+            } else {
+                // Letzter Wurf - Kategorie wählen
+                addAITimeout(() => finishAITurn(), 500);
+            }
+        }
+        
+        function finishAITurn() {
+            if (state.gameOver) return;
+            const player = state.players[state.currentPlayerIndex];
+            if (!player || !player.isAI) return;
+            
+            const optimal = findOptimalMove(player, state.dice, 0);
+            if (!optimal) { advanceTurn(); return; }
+            
+            const catIndex = player.scorecard.findIndex(c => c.id === optimal.category.id && c.score === null);
+            if (catIndex === -1) { advanceTurn(); return; }
+            
+            const score = player.scorecard[catIndex].calc(state.dice);
+            aiInfo.innerHTML = '<i class="fas fa-robot"></i> ' + player.name + ': ' + optimal.category.name + ' = ' + score + ' Punkte';
+            
+            player.scorecard[catIndex].score = score;
+            recalcTotals(state.currentPlayerIndex);
+            
+            addAITimeout(() => {
+                aiInfo.classList.remove('visible');
+                advanceTurn();
+            }, 900);
+        }
+        
+        // ==================== NEW GAME ====================
         newGameBtn.addEventListener('click', () => {
+            clearAITimeouts();
+            state.gameOver = true;
             gameScreen.style.display = 'none';
             gameOverScreen.style.display = 'none';
             setupScreen.style.display = 'block';
-            aiInfo.classList.remove('visible');
         });
-
+        
         playAgainBtn.addEventListener('click', () => {
             gameOverScreen.style.display = 'none';
             setupScreen.style.display = 'block';
         });
-
-        // ============================================================
-        // INITIALIZATION
-        // ============================================================
-        updatePlayerNameInputs();
         
-        window.addEventListener('load', () => {
-            playerCountInput.value = 2;
-            updatePlayerNameInputs();
-            
-            // Standardmäßig den zweiten Spieler als KI markieren
-            const aiCheckbox = document.getElementById('player2AI');
-            if (aiCheckbox) {
-                aiCheckbox.checked = true;
-                const label = aiCheckbox.closest('.ai-toggle');
-                if (label) label.classList.add('active');
-                const input = document.getElementById('player2Name');
-                if (input) input.value = 'KI Spieler';
+        // ==================== INIT ====================
+        updatePlayerInputs();
+        // Standard: Spieler 2 ist KI
+        setTimeout(() => {
+            const cb = $('p1ai');
+            if (cb && !cb.checked) {
+                cb.checked = true;
+                cb.dispatchEvent(new Event('change'));
+                const nameInput = $('p1name');
+                if (nameInput) nameInput.value = 'KI Spieler';
             }
-        });
+        }, 50);
+        
+    })();
     </script>
 </body>
 </html>
